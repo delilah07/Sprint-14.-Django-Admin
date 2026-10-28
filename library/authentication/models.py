@@ -78,6 +78,8 @@ class CustomUser(AbstractBaseUser):
     role = models.IntegerField(choices=ROLE_CHOICES, default=0)
     is_active = models.BooleanField(default=False)
     id = models.AutoField(primary_key=True)
+    is_staff = models.BooleanField(default=False)
+    is_superuser = models.BooleanField(default=False)
 
     USERNAME_FIELD = 'email'
     objects = CustomUserManager()
@@ -231,3 +233,10 @@ class CustomUser(AbstractBaseUser):
         returns str role name
         """
         return ROLE_CHOICES[self.role][1]
+
+    def has_perm(self, perm, obj=None):
+        return self.is_active and self.is_superuser
+
+
+    def has_module_perms(self, app_label):
+        return self.is_active and self.is_superuser
