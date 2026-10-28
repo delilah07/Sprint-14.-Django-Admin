@@ -1,0 +1,136 @@
+
+{% extends "base.html" %}
+
+{% block title %}Orders | Library{% endblock %}
+
+{% block content %}
+<section class="page-section orders-page">
+    <div class="page-heading">
+        <div>
+            <span class="section-eyebrow">YOUR LIBRARY ACTIVITY</span>
+            <h1>Book Orders</h1>
+            <p class="page-description">
+                Track borrowed books and their return dates.
+            </p>
+        </div>
+
+        {% if orders %}
+            <span class="count-label">
+                {{ orders|length }} order{{ orders|length|pluralize }}
+            </span>
+        {% endif %}
+    </div>
+
+    {% if orders %}
+        <div class="table-card orders-table-card">
+            <div class="orders-table-wrapper">
+                <table class="data-table orders-table">
+                    <thead>
+                        <tr>
+                            <th>Book</th>
+
+                            {% if user.role == 1 %}
+                                <th>User</th>
+                            {% endif %}
+
+                            <th>Created at</th>
+                            <th>Planned return</th>
+                            <th>Returned at</th>
+
+                            {% if user.role == 1 %}
+                                <th>Action</th>
+                            {% endif %}
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        {% for order in orders %}
+                            <tr>
+                                <td>
+                                    <div class="order-book-cell">
+                                        <span class="order-book-icon" aria-hidden="true">▤</span>
+                                        <div class="order-book-info">
+                                            <strong>{{ order.book.name }}</strong>
+                                            <span class="order-book-authors">
+                                                {% for author in order.book.authors.all %}
+                                                    {{ author.name }} {{ author.surname }}{% if not forloop.last %}, {% endif %}
+                                                {% empty %}
+                                                    Unknown author
+                                                {% endfor %}
+                                            </span>
+                                        </div>
+                                    </div>
+                                </td>
+
+                                {% if user.role == 1 %}
+                                    <td>
+                                        <span class="order-user-email">
+                                            {{ order.user.email }}
+                                        </span>
+                                    </td>
+                                {% endif %}
+
+                                <td>
+                                    <span class="order-date">
+                                        {{ order.created_at|date:"Y-m-d H:i" }}
+                                    </span>
+                                </td>
+
+                                <td>
+                                    <span class="order-date">
+                                        {{ order.plated_end_at|date:"Y-m-d H:i" }}
+                                    </span>
+                                </td>
+
+                                <td>
+                                    {% if order.end_at %}
+                                        <span class="order-status returned">
+                                            <span class="order-status-dot"></span>
+                                            {{ order.end_at|date:"Y-m-d H:i" }}
+                                        </span>
+                                    {% else %}
+                                        <span class="order-status borrowed">
+                                            <span class="order-status-dot"></span>
+                                            Not returned
+                                        </span>
+                                    {% endif %}
+                                </td>
+
+                                {% if user.role == 1 %}
+                                    <td>
+                                        {% if not order.end_at %}
+                                            <form
+                                                method="post"
+                                                action="{% url 'return_order' order.id %}"
+                                                class="order-return-form"
+                                                onsubmit="return confirm('Confirm that this book has been returned?');"
+                                            >
+                                                {% csrf_token %}
+                                                <button type="submit" class="button button-primary order-return-button">
+                                                    Return book
+                                                </button>
+                                            </form>
+                                        {% else %}
+                                            <span class="order-action-complete">
+                                                &#10003; Returned
+                                            </span>
+                                        {% endif %}
+                                    </td>
+                                {% endif %}
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    {% else %}
+        <div class="empty-state orders-empty-state">
+            <span class="empty-state-icon" aria-hidden="true">▤</span>
+            <h2>No orders yet</h2>
+            <p>
+                There are no book orders to display right now.
+            </p>
+        </div>
+    {% endif %}
+</section>
+{% endblock %}

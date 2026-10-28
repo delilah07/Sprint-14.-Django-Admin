@@ -1,0 +1,147 @@
+
+{% extends "base.html" %}
+
+{% block title %}Home | Library{% endblock %}
+
+{% block content %}
+<section class="hero">
+    <div class="hero-content">
+        <span class="eyebrow">YOUR NEXT CHAPTER STARTS HERE</span>
+
+        <h1>
+            Find your next<br>
+            <span>great read.</span>
+        </h1>
+
+        <p class="hero-description">
+            Explore a world of stories, discover inspiring authors,
+            and find a book worth getting lost in.
+        </p>
+
+        <div class="hero-actions">
+            <a class="button button-large" href="{% url 'book_list' %}">
+                Explore books <span aria-hidden="true">→</span>
+            </a>
+
+            {% if not user.is_authenticated %}
+                <a class="button button-outline button-large"
+                   href="{% url 'register' %}">
+                    Join the library
+                </a>
+            {% else %}
+                <a class="button button-outline button-large"
+                   href="{% url 'order_list' %}">
+                    My orders
+                </a>
+            {% endif %}
+        </div>
+
+        <div class="hero-note">
+            <span class="hero-note-icon">✦</span>
+            A good book can take you anywhere.
+        </div>
+    </div>
+
+    <div class="hero-visual" aria-label="Books and reading illustration">
+        <div class="visual-circle"></div>
+        <div class="book-stack">
+            <div class="book book-one">
+                <span>THE ART OF</span>
+                <strong>READING</strong>
+                <small>A WORLD OF STORIES</small>
+            </div>
+            <div class="book book-two">
+                <span>DISCOVER</span>
+                <strong>NEW WORLDS</strong>
+            </div>
+            <div class="book book-three">
+                <span>ONE MORE</span>
+                <strong>CHAPTER</strong>
+            </div>
+        </div>
+        <div class="floating-note">Open a book.<br>Open your mind.</div>
+    </div>
+</section>
+
+<section class="features-section">
+    <div class="section-heading">
+        <div>
+            <span class="eyebrow">EXPLORE & DISCOVER</span>
+            <h2>Your library, your way.</h2>
+        </div>
+        <p>
+            Everything you need to discover books and keep track
+            of your reading journey.
+        </p>
+    </div>
+
+    <div class="feature-grid">
+        <article class="feature-card">
+            <div class="feature-icon">⌕</div>
+            <span class="feature-number">01 / COLLECTION</span>
+            <h3>Explore the collection</h3>
+            <p>
+                Browse the library catalogue, discover new titles,
+                and find your next favourite book.
+            </p>
+            <a class="text-link" href="{% url 'book_list' %}">
+                Browse books <span aria-hidden="true">→</span>
+            </a>
+        </article>
+
+        <article class="feature-card">
+            <div class="feature-icon">✳</div>
+            <span class="feature-number">02 / AUTHORS</span>
+            <h3>Meet the authors</h3>
+            <p>
+                Discover the writers behind the stories and explore
+                the books connected to their names.
+            </p>
+            {% if user.is_authenticated and user.role == 1 %}
+                <a class="text-link" href="{% url 'author_list' %}">
+                    Manage authors <span aria-hidden="true">→</span>
+                </a>
+            {% else %}
+                <a class="text-link" href="{% url 'book_list' %}">
+                    Discover books <span aria-hidden="true">→</span>
+                </a>
+            {% endif %}
+        </article>
+
+        <article class="feature-card">
+            <div class="feature-icon">↗</div>
+            <span class="feature-number">03 / YOUR ACCOUNT</span>
+            <h3>Keep it organised</h3>
+            <p>
+                {% if user.is_authenticated %}
+                    Review your book orders and keep track of your library activity.
+                {% else %}
+                    Create an account to borrow books and manage your orders.
+                {% endif %}
+            </p>
+
+            {% if user.is_authenticated %}
+                <a class="text-link" href="{% url 'order_list' %}">
+                    View orders <span aria-hidden="true">→</span>
+                </a>
+            {% else %}
+                <a class="text-link" href="{% url 'register' %}">
+                    Create an account <span aria-hidden="true">→</span>
+                </a>
+            {% endif %}
+        </article>
+    </div>
+</section>
+
+<section class="closing-banner">
+    <div>
+        <span class="eyebrow">A NEW STORY AWAITS</span>
+        <h2>Make room for one more book.</h2>
+        <p>Your next favourite might be closer than you think.</p>
+    </div>
+    <a class="button button-light button-large"
+       href="{% url 'book_list' %}">
+        Find a book <span aria-hidden="true">→</span>
+    </a>
+</section>
+{% endblock %}

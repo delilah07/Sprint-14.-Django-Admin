@@ -1,0 +1,124 @@
+
+{% extends "base.html" %}
+
+{% block title %}Books | Library{% endblock %}
+
+{% block content %}
+<section class="page-section books-page">
+    <div class="page-heading books-page-heading">
+        <div>
+            <span class="section-eyebrow">DISCOVER YOUR NEXT READ</span>
+            <h1>Our Books</h1>
+            <p class="page-description">
+                Explore the collection and find your next favorite book.
+            </p>
+        </div>
+
+        {% if books %}
+            <span class="count-label">
+                {{ books|length }} book{{ books|length|pluralize }}
+            </span>
+        {% endif %}
+    </div>
+
+    <form method="get" action="{% url 'book_list' %}" class="book-search-card">
+        <div class="book-search-fields">
+            <div class="form-group">
+                <label for="title">Book title</label>
+                <input
+                    type="text"
+                    id="title"
+                    name="title"
+                    value="{{ title_query }}"
+                    placeholder="Search by title..."
+                >
+            </div>
+
+            <div class="form-group">
+                <label for="author">Author</label>
+                <input
+                    type="text"
+                    id="author"
+                    name="author"
+                    value="{{ author_query }}"
+                    placeholder="Search by author..."
+                >
+            </div>
+
+            <div class="book-search-actions">
+                <button type="submit" class="button button-primary">
+                    <span aria-hidden="true">⌕</span>
+                    Search
+                </button>
+
+                <a href="{% url 'book_list' %}" class="button button-secondary">
+                    Clear filters
+                </a>
+            </div>
+        </div>
+    </form>
+
+    {% if books %}
+        <div class="books-grid">
+            {% for book in books %}
+                <article class="book-card">
+                    <a href="{% url 'book_detail' book.id %}" class="book-card-cover-link" aria-label="View {{ book.name }}">
+                        <div class="book-card-cover">
+                            <div class="book-card-cover-inner">
+                                <span class="book-card-library-label">THE LIBRARY COLLECTION</span>
+                                <span class="book-card-cover-decoration"></span>
+                                <span class="book-card-cover-title">{{ book.name }}</span>
+                                <span class="book-card-cover-bottom">✦</span>
+                            </div>
+                        </div>
+                    </a>
+
+                    <div class="book-card-content">
+                        <div class="book-card-meta">
+                            {% if book.count > 0 %}
+                                <span class="book-status available">
+                                    <span class="availability-dot"></span>
+                                    Available
+                                </span>
+                            {% else %}
+                                <span class="book-status unavailable-status">
+                                    <span class="availability-dot unavailable"></span>
+                                    Unavailable
+                                </span>
+                            {% endif %}
+
+                            <span class="book-card-copies">
+                                {{ book.count }} cop{{ book.count|pluralize:"y,ies" }}
+                            </span>
+                        </div>
+
+                        <h2 class="book-card-title">
+                            <a href="{% url 'book_detail' book.id %}">
+                                {{ book.name }}
+                            </a>
+                        </h2>
+
+                        <p class="book-card-description">
+                            {{ book.description|default:"No description available."|truncatewords:22 }}
+                        </p>
+
+                        <a href="{% url 'book_detail' book.id %}" class="book-card-link">
+                            View details
+                            <span aria-hidden="true">&rarr;</span>
+                        </a>
+                    </div>
+                </article>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="empty-state books-empty-state">
+            <span class="empty-state-icon" aria-hidden="true">⌕</span>
+            <h2>No books found</h2>
+            <p>Try another title or author, or clear your filters to see all books.</p>
+            <a href="{% url 'book_list' %}" class="button button-primary">
+                Show all books
+            </a>
+        </div>
+    {% endif %}
+</section>
+{% endblock %}

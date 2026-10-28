@@ -1,0 +1,68 @@
+
+{% extends "base.html" %}
+
+{% block title %}Member details | Library{% endblock %}
+
+{% block content %}
+<section class="page-section">
+    <a class="back-link" href="{% url 'user_list' %}">
+        <span aria-hidden="true">←</span> Back to members
+    </a>
+
+    <div class="profile-card">
+        <div class="profile-header">
+            <span class="profile-avatar">
+                {{ selected_user.first_name|default:selected_user.email|first|upper }}
+            </span>
+            <div>
+                <span class="eyebrow">MEMBER PROFILE</span>
+                <h1>
+                    {{ selected_user.first_name }} {{ selected_user.last_name }}
+                </h1>
+                <span class="role-badge {% if selected_user.role == 1 %}role-librarian{% else %}role-visitor{% endif %}">
+                    {{ selected_user.get_role_name }}
+                </span>
+            </div>
+        </div>
+
+        <div class="profile-details">
+            <div class="profile-detail">
+                <span>First name</span>
+                <strong>{{ selected_user.first_name|default:"—" }}</strong>
+            </div>
+
+            <div class="profile-detail">
+                <span>Last name</span>
+                <strong>{{ selected_user.last_name|default:"—" }}</strong>
+            </div>
+
+            <div class="profile-detail">
+                <span>Middle name</span>
+                <strong>{{ selected_user.middle_name|default:"—" }}</strong>
+            </div>
+
+            <div class="profile-detail">
+                <span>Email address</span>
+                <strong>{{ selected_user.email }}</strong>
+            </div>
+
+            <div class="profile-detail">
+                <span>Account role</span>
+                <strong>{{ selected_user.get_role_name }}</strong>
+            </div>
+
+            <div class="profile-detail">
+                <span>Registered</span>
+                <strong>{{ selected_user.created_at|date:"d M Y, H:i" }}</strong>
+            </div>
+        </div>
+
+        <div class="profile-footer">
+            <span>Library member information</span>
+            <a class="button button-outline" href="{% url 'user_list' %}">
+                Back to members
+            </a>
+        </div>
+    </div>
+</section>
+{% endblock %}
