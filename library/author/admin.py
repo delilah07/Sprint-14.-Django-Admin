@@ -1,8 +1,24 @@
 
 from django.contrib import admin
 from .models import Author
+from book.models import Book
 
+class BookFilter(admin.SimpleListFilter):
+    title = 'books'
+    parameter_name = 'books'
 
+    def lookups(self, request, model_admin):
+        books = Book.objects.order_by('name')
+        return [
+            (str(book.pk), book.name)
+            for book in books
+        ]
+
+    def queryset(self, request, queryset):
+        if self.value():
+            return queryset.filter(books__pk=self.value()).distinct()
+        return queryset
+    
 @admin.register(Author)
 class AuthorAdmin(admin.ModelAdmin):
     list_display = (
@@ -21,7 +37,7 @@ class AuthorAdmin(admin.ModelAdmin):
         'books__name',
     )
 
-    list_filter = ('books',)
+    list_filter = (BookFilter,)
     list_per_page = 20
 
     fieldsets = (
@@ -42,3 +58,5 @@ class AuthorAdmin(admin.ModelAdmin):
             return False
 
         return super().has_delete_permission(request, obj)
+
+
